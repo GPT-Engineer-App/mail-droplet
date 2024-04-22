@@ -9,11 +9,12 @@ const Index = () => {
   const [emailContent, setEmailContent] = useState("");
   const [emailSubject, setEmailSubject] = useState("");
   const [user, setUser] = useState({ username: "", password: "" });
+  const [users, setUsers] = useState([{ username: "testuser", password: "testpassword" }]);
   const toast = useToast();
 
   const handleLogin = () => {
     // Dummy authentication
-    if (user.username === "admin" && user.password === "admin") {
+    if (users.some((u) => u.username === user.username && u.password === user.password)) {
       setIsLoggedIn(true);
       toast({
         title: "Logged in",
@@ -35,13 +36,24 @@ const Index = () => {
 
   const handleRegister = () => {
     // Dummy registration
-    toast({
-      title: "Registration Successful",
-      description: "You can now log in with your credentials.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    if (users.some((u) => u.username === user.username)) {
+      toast({
+        title: "Registration Failed",
+        description: "Username already exists.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      setUsers([...users, { username: user.username, password: user.password }]);
+      toast({
+        title: "Registration Successful",
+        description: "You can now log in with your credentials.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleSendEmail = () => {
